@@ -4,13 +4,23 @@
     <meta charset="UTF-8">
     <title>Teachers Directory</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background: #4CAF50; color: white; padding: 10px 20px; }
-        .filters { padding: 10px 20px; background: #f9f9f9; }
-        .teacher-list { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
-        .teacher-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; width: 200px; text-align: center; }
-        .teacher-card img { border-radius: 50%; width: 100px; height: 100px; object-fit: cover; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #eaf4fb; }
+        header { background: #3a8ecf; color: white; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .filters { padding: 10px 20px; background: #dfeff8; border-bottom: 1px solid #ccc; }
+        .teacher-list { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); gap: 20px; padding: 20px; justify-content: center; }
+        .teacher-card { background: white; border: 1px solid #ccc; border-radius: 10px; padding: 20px; max-width: 220px; width: 100%; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s, width 0.2s; overflow: visible; justify-self: center; cursor: pointer; }
+        .teacher-card .details { display: block; background: #000; color: white; padding: 15px; border-radius: 10px; text-align: left; margin-top: 10px; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.5s ease, max-height 0.5s ease; }
+        .teacher-card:hover { width: 500px; }
+        .teacher-card:hover .details { opacity: 1; max-height: 200px; }
+        .teacher-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+        .teacher-card img { border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 2px solid #3a8ecf; }
         .hidden { display: none; }
+        .main-wrapper { display: flex; gap: 10px; }
+        .detail-panel { width: 450px; background: #fff; border-left: 1px solid #ccc; padding: 30px; overflow-y: auto; }
+        .detail-panel img { width: 120px; height: 120px; border-radius: 50%; border: 2px solid #3a8ecf; }
+        .detail-panel h2 { margin-top: 10px; margin-bottom: 5px; }
+        .detail-panel button { margin: 5px 5px 0 0; padding: 8px 12px; background: #3a8ecf; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .detail-panel button:hover { background: #336ba8; }
         label { margin-right: 10px; }
     </style>
 </head>
@@ -36,31 +46,32 @@
     </select>
 </div>
 
-<div class="teacher-list" id="teacherList">
-    <!-- sample teacher cards -->
-    <div class="teacher-card" data-dept="math" data-time="9am">
-        <img src="https://via.placeholder.com/100" alt="Alice">
-        <h3>Alice Johnson</h3>
-        <p>Course: Calculus</p>
-        <p>Free at: 9:00 AM</p>
+<!-- container wrapping list and details panel -->
+<div class="main-wrapper">
+    <div class="teacher-list" id="teacherList">
+        <!-- sample teacher cards -->
+        <div class="teacher-card" data-dept="math" data-time="9am">
+            <img src="https://via.placeholder.com/100" alt="Alice">
+            <h3>Alice Johnson</h3>
+            <p>Course: Calculus</p>
+            <p>Free at: 9:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Senior math instructor with 10 years of experience teaching calculus and algebra. Available for tutoring on weekdays.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="science" data-time="10am">
+            <img src="https://via.placeholder.com/100" alt="Bob">
+            <h3>Bob Smith</h3>
+            <p>Course: Chemistry</p>
+            <p>Free at: 10:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Chemistry professor specializing in organic and physical chemistry. Loves lab demonstrations and one-on-one help.
+            </div>
+        </div>
+
     </div>
-    <div class="teacher-card" data-dept="science" data-time="10am">
-        <img src="https://via.placeholder.com/100" alt="Bob">
-        <h3>Bob Smith</h3>
-        <p>Course: Chemistry</p>
-        <p>Free at: 10:00 AM</p>
-    </div>
-    <div class="teacher-card" data-dept="english" data-time="11am">
-        <img src="https://via.placeholder.com/100" alt="Carol">
-        <h3>Carol Lee</h3>
-        <p>Course: Literature</p>
-        <p>Free at: 11:00 AM</p>
-    </div>
-    <div class="teacher-card" data-dept="math" data-time="10am">
-        <img src="https://via.placeholder.com/100" alt="David">
-        <h3>David Kim</h3>
-        <p>Course: Algebra</p>
-        <p>Free at: 10:00 AM</p>
+    <div class="detail-panel" id="detailPanel">
+        <h2 style="color: #3a8ecf; text-align: center; margin-top: 50px; font-size: 24px;">Get ready to take a leap in your education</h2>
     </div>
 </div>
 
@@ -85,6 +96,31 @@
 
     deptSelect.addEventListener('change', filterTeachers);
     timeSelect.addEventListener('change', filterTeachers);
+
+    const detailPanel = document.getElementById('detailPanel');
+    const cards = document.querySelectorAll('.teacher-card');
+
+    function showInPanel(card) {
+        const imgSrc = card.querySelector('img').src;
+        const name = card.querySelector('h3').textContent;
+        const course = card.querySelector('p').textContent;
+        const free = card.querySelectorAll('p')[1].textContent;
+        const about = card.querySelector('.details') ? card.querySelector('.details').innerHTML : '';
+        detailPanel.innerHTML = `
+            <img src="${imgSrc}" alt="${name}">
+            <h2>${name}</h2>
+            <p>${course}</p>
+            <p>${free}</p>
+            <div>${about}</div>
+            <button>Talk</button><button>Book</button>
+        `;
+        detailPanel.classList.remove('hidden');
+    }
+
+    cards.forEach(card => {
+        card.addEventListener('click', () => showInPanel(card));
+        card.addEventListener('mouseover', () => showInPanel(card));
+    });
 </script>
 </body>
 </html>
