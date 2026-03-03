@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teachers Directory</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background: #4CAF50; color: white; padding: 10px 20px; }
+        .filters { padding: 10px 20px; background: #f9f9f9; }
+        .teacher-list { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+        .teacher-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; width: 200px; text-align: center; }
+        .teacher-card img { border-radius: 50%; width: 100px; height: 100px; object-fit: cover; }
+        .hidden { display: none; }
+        label { margin-right: 10px; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Teachers Directory</h1>
+</header>
+<div class="filters">
+    <label for="deptSelect">Department:</label>
+    <select id="deptSelect">
+        <option value="all">All</option>
+        <option value="math">Mathematics</option>
+        <option value="science">Science</option>
+        <option value="english">English</option>
+    </select>
+
+    <label for="timeSelect">Free At:</label>
+    <select id="timeSelect">
+        <option value="all">All</option>
+        <option value="9am">9:00 AM</option>
+        <option value="10am">10:00 AM</option>
+        <option value="11am">11:00 AM</option>
+    </select>
+</div>
+
+<div class="teacher-list" id="teacherList">
+    <!-- sample teacher cards -->
+    <div class="teacher-card" data-dept="math" data-time="9am">
+        <img src="https://via.placeholder.com/100" alt="Alice">
+        <h3>Alice Johnson</h3>
+        <p>Course: Calculus</p>
+        <p>Free at: 9:00 AM</p>
+    </div>
+    <div class="teacher-card" data-dept="science" data-time="10am">
+        <img src="https://via.placeholder.com/100" alt="Bob">
+        <h3>Bob Smith</h3>
+        <p>Course: Chemistry</p>
+        <p>Free at: 10:00 AM</p>
+    </div>
+    <div class="teacher-card" data-dept="english" data-time="11am">
+        <img src="https://via.placeholder.com/100" alt="Carol">
+        <h3>Carol Lee</h3>
+        <p>Course: Literature</p>
+        <p>Free at: 11:00 AM</p>
+    </div>
+    <div class="teacher-card" data-dept="math" data-time="10am">
+        <img src="https://via.placeholder.com/100" alt="David">
+        <h3>David Kim</h3>
+        <p>Course: Algebra</p>
+        <p>Free at: 10:00 AM</p>
+    </div>
+</div>
+
+<script>
+    const deptSelect = document.getElementById('deptSelect');
+    const timeSelect = document.getElementById('timeSelect');
+    const teacherList = document.getElementById('teacherList');
+
+    function filterTeachers() {
+        const dept = deptSelect.value;
+        const time = timeSelect.value;
+        const cards = teacherList.children;
+        for (let card of cards) {
+            const cardDept = card.getAttribute('data-dept');
+            const cardTime = card.getAttribute('data-time');
+            let visible = true;
+            if (dept !== 'all' && cardDept !== dept) visible = false;
+            if (time !== 'all' && cardTime !== time) visible = false;
+            card.classList.toggle('hidden', !visible);
+        }
+    }
+
+    deptSelect.addEventListener('change', filterTeachers);
+    timeSelect.addEventListener('change', filterTeachers);
+</script>
+</body>
+</html>
