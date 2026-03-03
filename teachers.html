@@ -8,15 +8,13 @@
         header { background: #3a8ecf; color: white; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .filters { padding: 10px 20px; background: #dfeff8; border-bottom: 1px solid #ccc; }
         .teacher-list { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); gap: 20px; padding: 20px; justify-content: center; }
-        .teacher-card { background: white; border: 1px solid #ccc; border-radius: 10px; padding: 20px; max-width: 220px; width: 100%; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s, width 0.2s; overflow: visible; justify-self: center; cursor: pointer; }
+        .teacher-card { background: white; border: 1px solid #ccc; border-radius: 0px; padding: 20px; max-width: 220px; width: 100%; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s, width 0.2s; overflow: visible; justify-self: center; cursor: pointer; }
         .teacher-card .details { display: block; background: #000; color: white; padding: 15px; border-radius: 10px; text-align: left; margin-top: 10px; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.5s ease, max-height 0.5s ease; }
-        .teacher-card:hover { width: 500px; }
-        .teacher-card:hover .details { opacity: 1; max-height: 200px; }
-        .teacher-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+        .teacher-card:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
         .teacher-card img { border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 2px solid #3a8ecf; }
         .hidden { display: none; }
-        .main-wrapper { display: flex; gap: 10px; }
-        .detail-panel { width: 450px; background: #fff; border-left: 1px solid #ccc; padding: 30px; overflow-y: auto; }
+        .main-wrapper { display: block; }
+        .detail-panel { position: fixed; right: 0; top: 0; width: 250px; background: #fff; border-left: 1px solid #ccc; padding: 30px; overflow-y: auto; height: 100vh; box-sizing: border-box; }
         .detail-panel img { width: 120px; height: 120px; border-radius: 50%; border: 2px solid #3a8ecf; }
         .detail-panel h2 { margin-top: 10px; margin-bottom: 5px; }
         .detail-panel button { margin: 5px 5px 0 0; padding: 8px 12px; background: #3a8ecf; color: white; border: none; border-radius: 4px; cursor: pointer; }
@@ -51,7 +49,7 @@
     <div class="teacher-list" id="teacherList">
         <!-- sample teacher cards -->
         <div class="teacher-card" data-dept="math" data-time="9am">
-            <img src="https://via.placeholder.com/100" alt="Alice">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Alice">
             <h3>Alice Johnson</h3>
             <p>Course: Calculus</p>
             <p>Free at: 9:00 AM</p>
@@ -60,7 +58,7 @@
             </div>
         </div>
         <div class="teacher-card" data-dept="science" data-time="10am">
-            <img src="https://via.placeholder.com/100" alt="Bob">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Bob">
             <h3>Bob Smith</h3>
             <p>Course: Chemistry</p>
             <p>Free at: 10:00 AM</p>
@@ -68,10 +66,64 @@
                 <strong>About:</strong> Chemistry professor specializing in organic and physical chemistry. Loves lab demonstrations and one-on-one help.
             </div>
         </div>
+        <div class="teacher-card" data-dept="english" data-time="11am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Carol">
+            <h3>Carol Lee</h3>
+            <p>Course: Literature</p>
+            <p>Free at: 11:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Passionate English teacher specializing in literature and creative writing. Offers guidance on essay writing and book analysis.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="math" data-time="10am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="David">
+            <h3>David Kim</h3>
+            <p>Course: Algebra</p>
+            <p>Free at: 10:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Experienced math tutor with expertise in algebra and geometry. Known for making complex problems easy to understand.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="science" data-time="9am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Eve">
+            <h3>Eve Turner</h3>
+            <p>Course: Physics</p>
+            <p>Free at: 9:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Physics educator with hands-on laboratory experience. Specializes in making physics concepts interactive and fun.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="english" data-time="10am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Frank">
+            <h3>Frank Morales</h3>
+            <p>Course: Creative Writing</p>
+            <p>Free at: 10:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Published author and creative writing instructor. Mentors students in developing their unique writing voice.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="math" data-time="11am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Grace">
+            <h3>Grace Chen</h3>
+            <p>Course: Statistics</p>
+            <p>Free at: 11:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Statistics and data analysis expert. Helps students understand real-world applications of statistical concepts.
+            </div>
+        </div>
+        <div class="teacher-card" data-dept="science" data-time="11am">
+            <img src="Gemini_Generated_Image_7rbkkx7rbkkx7rbk.png" alt="Henry">
+            <h3>Henry Patel</h3>
+            <p>Course: Biology</p>
+            <p>Free at: 11:00 AM</p>
+            <div class="details">
+                <strong>About:</strong> Biology professor passionate about life sciences. Excellent at explaining cellular and evolutionary concepts.
+            </div>
+        </div>
 
     </div>
     <div class="detail-panel" id="detailPanel">
-        <h2 style="color: #3a8ecf; text-align: center; margin-top: 50px; font-size: 24px;">Get ready to take a leap in your education</h2>
+        <h2 style="color: #3a8ecf; text-align: center; margin-top: 50px; font-size: 24px;">Select a teacher to see their details</h2>
     </div>
 </div>
 
@@ -99,6 +151,7 @@
 
     const detailPanel = document.getElementById('detailPanel');
     const cards = document.querySelectorAll('.teacher-card');
+    let selectedCard = null;
 
     function showInPanel(card) {
         const imgSrc = card.querySelector('img').src;
@@ -118,8 +171,18 @@
     }
 
     cards.forEach(card => {
-        card.addEventListener('click', () => showInPanel(card));
-        card.addEventListener('mouseover', () => showInPanel(card));
+        card.addEventListener('click', () => {
+            showInPanel(card);
+            selectedCard = card;
+        });
+        card.addEventListener('mouseover', () => {
+            showInPanel(card);
+        });
+        card.addEventListener('mouseleave', () => {
+            if (selectedCard !== card) {
+                detailPanel.innerHTML = '<h2 style="color: #3a8ecf; text-align: center; margin-top: 50px; font-size: 24px;">Select a teacher to see their details</h2>';
+            }
+        });
     });
 </script>
 </body>
