@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Profile — Teacher</title>
+  <style>
+    :root{
+      --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card: #ffffff;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #1f2937;
+      --shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    body{
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      background-attachment: fixed;
+      margin: 0;
+      padding: 32px;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-container{
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 600px;
+    }
+    h1{
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+    .subtitle{
+      color: #6b7280;
+      margin: 0 0 32px;
+      font-size: 16px;
+      text-align: center;
+    }
+    .form-row{
+      display: flex;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .form-row > *{
+      flex: 1;
+    }
+    .form-group{
+      margin: 16px 0;
+    }
+    label{
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    input, select, textarea{
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    textarea{
+      resize: vertical;
+      min-height: 80px;
+    }
+    input:focus, select:focus, textarea:focus{
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .courses-input{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .courses-input input{
+      flex: 1;
+    }
+    .add-course{
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .add-course:hover{
+      background: var(--accent-hover);
+    }
+    .courses-list{
+      margin-top: 8px;
+    }
+    .course-chip{
+      display: inline-block;
+      background: #dbeafe;
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 16px;
+      margin: 4px 4px 0 0;
+      font-size: 14px;
+    }
+    .days-checkboxes{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .days-checkboxes label{
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: normal;
+    }
+    .day-hours{
+      margin: 8px 0;
+      padding: 8px;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
+    .day-hours label{
+      font-weight: 500;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .day-hours input{
+      width: 100%;
+      margin: 4px 0;
+    }
+    .save-btn{
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 24px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .save-btn:hover{
+      background: linear-gradient(135deg, var(--accent-hover), #7c3aed);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+    .error{
+      color: #ef4444;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h1 id="pageTitle">Create Your Profile</h1>
+    <p class="subtitle">Please fill in your details to complete your teacher profile</p>
+    <form id="profileForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" required />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="bio">Bio:</label>
+        <textarea id="bio" placeholder="Tell students about yourself..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="experience">Experience:</label>
+        <textarea id="experience" placeholder="Your teaching experience and qualifications..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Courses:</label>
+        <div class="courses-input">
+          <input type="text" id="courseInput" placeholder="Add a course" />
+          <button type="button" class="add-course" onclick="addCourse()">Add</button>
+        </div>
+        <div class="courses-list" id="coursesList"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="availability">Availability (Days):</label>
+        <div class="days-checkboxes">
+          <label><input type="checkbox" value="Monday"> Monday</label>
+          <label><input type="checkbox" value="Tuesday"> Tuesday</label>
+          <label><input type="checkbox" value="Wednesday"> Wednesday</label>
+          <label><input type="checkbox" value="Thursday"> Thursday</label>
+          <label><input type="checkbox" value="Friday"> Friday</label>
+          <label><input type="checkbox" value="Saturday"> Saturday</label>
+          <label><input type="checkbox" value="Sunday"> Sunday</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Free Hours (per day):</label>
+        <div id="freeHoursContainer">
+          <!-- Dynamic inputs for each selected day -->
+        </div>
+      </div>
+
+      <button type="submit" class="save-btn" id="saveBtn">Save Profile</button>
+    </form>
+    <p class="error" id="errorMsg"></p>
+  </div>
+
+  <script>
+    let courses = [];
+    let availability = [];
+    let freeHours = [];
+
+    function addCourse() {
+      const courseInput = document.getElementById('courseInput');
+      const course = courseInput.value.trim();
+      if (course && !courses.includes(course)) {
+        courses.push(course);
+        renderCourses();
+        courseInput.value = '';
+      }
+    }
+
+    function renderCourses() {
+      const coursesList = document.getElementById('coursesList');
+      coursesList.innerHTML = courses.map(c => `<span class="course-chip">${c}</span>`).join('');
+    }
+
+    function updateAvailability() {
+      const checkboxes = document.querySelectorAll('.days-checkboxes input[type="checkbox"]');
+      availability = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      renderFreeHoursInputs();
+    }
+
+    function renderFreeHoursInputs() {
+      const container = document.getElementById('freeHoursContainer');
+      container.innerHTML = '';
+      availability.forEach(day => {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day-hours';
+        dayDiv.innerHTML = `
+          <label>${day}:</label>
+          <input type="text" placeholder="e.g., 10:00-12:00, 14:00-16:00" data-day="${day}" />
+        `;
+        container.appendChild(dayDiv);
+      });
+    }
+
+    // Add event listeners for checkboxes
+    document.querySelectorAll('.days-checkboxes input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', updateAvailability);
+    });
+
+    // Load existing profile if editing
+    const username = localStorage.getItem('username');
+    const existingProfile = localStorage.getItem(`teacher_${username}`);
+    if (existingProfile) {
+      const profile = JSON.parse(existingProfile);
+      document.getElementById('pageTitle').textContent = 'Edit Your Profile';
+      document.getElementById('saveBtn').textContent = 'Update Profile';
+      document.getElementById('firstName').value = profile.name.split(' ')[0];
+      document.getElementById('lastName').value = profile.name.split(' ').slice(1).join(' ');
+      document.getElementById('email').value = profile.email;
+      document.getElementById('bio').value = profile.bio;
+      document.getElementById('experience').value = profile.experience;
+      courses = profile.courses || [];
+      renderCourses();
+      availability = profile.availability || [];
+      // Check the checkboxes
+      availability.forEach(day => {
+        const cb = document.querySelector(`.days-checkboxes input[value="${day}"]`);
+        if (cb) cb.checked = true;
+      });
+      updateAvailability();
+      // Fill free hours
+      if (profile.freeHours) {
+        profile.freeHours.forEach(hour => {
+          const [day, time] = hour.split(' ');
+          const input = document.querySelector(`input[data-day="${day}"]`);
+          if (input) {
+            input.value = time;
+          }
+        });
+      }
+    }
+
+    const profileForm = document.getElementById('profileForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    profileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+      const experience = document.getElementById('experience').value.trim();
+
+      // Collect free hours
+      freeHours = [];
+      availability.forEach(day => {
+        const input = document.querySelector(`input[data-day="${day}"]`);
+        if (input && input.value.trim()) {
+          const times = input.value.trim().split(',').map(t => `${day} ${t.trim()}`);
+          freeHours.push(...times);
+        }
+      });
+
+      if (!firstName || !lastName || !email || !bio || !experience || courses.length === 0 || availability.length === 0) {
+        errorMsg.textContent = 'Please fill in all fields, add courses, and select availability.';
+        return;
+      }
+
+      const profile = {
+        name: `${firstName} ${lastName}`,
+        email,
+        bio,
+        experience,
+        courses,
+        courseMaterials: [],
+        freeHours,
+        availability
+      };
+
+      // Save profile
+      const username = localStorage.getItem('username');
+      localStorage.setItem(`teacher_${username}`, JSON.stringify(profile));
+
+      // Redirect to dashboard
+      window.location.href = 'teacher-dashboard.html';
+    });
+  </script>
+</body>
+</html>

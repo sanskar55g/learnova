@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teacher Portfolio — Student Learning Portal</title>
+  <style>
+    :root{
+      --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #1f2937;
+      --shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    body{
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      background-attachment: fixed;
+      margin: 0;
+      padding: 32px;
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container{
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    h1{
+      margin: 0 0 8px;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+    .subtitle{
+      color: var(--muted);
+      margin: 0 0 24px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .card{
+      background: var(--card);
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      margin: 24px 0;
+      border: 1px solid #f3f4f6;
+    }
+    .profile{
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    .profile-img{
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 16px;
+      text-align: center;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 2px solid #e5e7eb;
+    }
+    .profile-info{
+      flex: 1;
+    }
+    .section{
+      margin: 24px 0;
+    }
+    .section h2{
+      font-size: 22px;
+      margin: 0 0 16px;
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 8px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .chips{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip{
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #93c5fd;
+      transition: all 0.2s ease;
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+    }
+    .free-hours li{
+      margin: 6px 0;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+    }
+    .free-times .day-section{
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      font-size: 16px;
+    }
+    .actions{
+      text-align: center;
+      margin: 32px 0;
+    }
+    .book-btn, .back-btn{
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .book-btn:hover, .back-btn:hover{
+      background: linear-gradient(135deg, var(--accent-hover), #7c3aed);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+    ul{
+      padding-left: 20px;
+    }
+    li{
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    @media (max-width: 760px){
+      .profile{
+        flex-direction: column;
+        text-align: center;
+      }
+      .profile-img{
+        width: 100%;
+        height: 150px;
+      }
+      .container{
+        padding: 24px;
+      }
+      h1{
+        font-size: 28px;
+      }
+      .card{
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-btn" onclick="history.back()">← Back to Teachers</button>
+    <div id="teacherDetail">
+      <!-- content rendered by JS -->
+    </div>
+  </div>
+
+  <script>
+    // Check authentication
+    const role = localStorage.getItem('userRole');
+    if (!role || role !== 'student') {
+      window.location.href = 'login.html';
+    }
+
+    // Load teacher data from localStorage
+    let data = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith('teacher_')) {
+        const teacher = JSON.parse(localStorage.getItem(key));
+        data.push(teacher);
+      }
+    }
+
+    // Fallback to sample data if no teachers
+    if (data.length === 0) {
+      data = [
+        {id:0, name:'Dr. Asha Patel',courses:['Mathematics','Statistics'],freeHours:['Monday 10:00-12:00','Wednesday 14:00-16:00'],availability:['Monday','Wednesday'], bio:'Experienced mathematician with 15 years in teaching advanced calculus and statistics.', experience:'PhD in Mathematics, Published 20+ papers', email:'asha.patel@learnova.edu', courseMaterials:['Calculus Textbook','Statistics Notes','Practice Problems']},
+        {id:1, name:'Mr. Rohit Singh',courses:['Physics'],freeHours:['Tuesday 09:00-11:00','Thursday 15:00-17:00'],availability:['Tuesday','Thursday'], bio:'Passionate physics educator specializing in quantum mechanics and relativity.', experience:'MSc Physics, 10 years teaching', email:'rohit.singh@learnova.edu', courseMaterials:['Quantum Physics Guide','Relativity Slides','Lab Experiments']},
+        {id:2, name:'Ms. Priya Mehta',courses:['Chemistry','Biology'],freeHours:['Monday 13:00-15:00','Friday 10:00-12:00'],availability:['Monday','Friday'], bio:'Biochemist with expertise in organic chemistry and molecular biology.', experience:'PhD Biochemistry, Research in drug development', email:'priya.mehta@learnova.edu', courseMaterials:['Organic Chemistry Manual','Biology Lab Kit','Molecular Diagrams']},
+        {id:3, name:'Dr. Sanjay Rao',courses:['Computer Science'],freeHours:['Wednesday 09:00-11:00','Saturday 10:00-13:00'],availability:['Wednesday','Saturday'], bio:'AI and machine learning expert, teaching algorithms and data structures.', experience:'PhD CS, Former Google engineer', email:'sanjay.rao@learnova.edu', courseMaterials:['Algorithms Book','Data Structures Code','AI Tutorials']},
+        {id:4, name:'Mrs. Leela Kapoor',courses:['English','History'],freeHours:['Tuesday 14:00-16:00','Thursday 09:00-10:30'],availability:['Tuesday','Thursday'], bio:'Literature and history scholar with focus on Indian classics and world history.', experience:'MA English Literature, 12 years teaching', email:'leela.kapoor@learnova.edu', courseMaterials:['Literature Anthology','History Timelines','Essay Guides']},
+        {id:5, name:'Mr. Amit Verma',courses:['Economics'],freeHours:['Friday 14:00-17:00'],availability:['Friday'], bio:'Economist specializing in macroeconomics and international trade.', experience:'MBA Finance, Consultant for IMF', email:'amit.verma@learnova.edu', courseMaterials:['Economics Textbook','Trade Case Studies','Financial Models']}
+      ];
+    }
+
+    const detailDiv = document.getElementById('teacherDetail');
+
+    function getTeacherById(id){
+      return data.find(t => t.id == id);
+    }
+
+    function renderDetail(teacher){
+      if(!teacher){
+        detailDiv.innerHTML = '<p>Teacher not found.</p>';
+        return;
+      }
+
+      // Group free hours by day
+      const freeByDay = {Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
+      teacher.freeHours.forEach(h => {
+        const day = h.split(' ')[0];
+        if(freeByDay[day]) freeByDay[day].push(h.split(' ')[1]);
+      });
+
+      detailDiv.innerHTML = `
+        <div class="card">
+          <div class="profile">
+            <div class="profile-img">
+              <div>Profile<br>Image</div>
+            </div>
+            <div class="profile-info">
+              <div class="section">
+                <h2>About</h2>
+                <p>${teacher.bio}</p>
+              </div>
+              <div class="section">
+                <h2>Experience</h2>
+                <p>${teacher.experience}</p>
+              </div>
+              <div class="section">
+                <h2>Courses Taught</h2>
+                <div class="chips">${teacher.courses.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section">
+            <h2>Course Materials</h2>
+            <ul>${teacher.courseMaterials && teacher.courseMaterials.length ? teacher.courseMaterials.map(m => typeof m === 'string' ? `<li>${m}</li>` : `<li>${m.name} - ${m.desc}</li>`).join('') : '<li>No materials uploaded yet</li>'}</ul>
+          </div>
+          <div class="section">
+            <h2>Free Times (Monday to Friday)</h2>
+            <div class="free-times">
+              ${Object.entries(freeByDay).map(([day, times]) => `
+                <div class="day-section">
+                  <strong>${day}:</strong> ${times.length ? times.join(', ') : 'No free times'}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="book-btn" onclick="bookMeeting('${teacher.name}')">Book a Meeting</button>
+        </div>
+      `;
+    }
+
+    // Get id from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const teacher = getTeacherById(id);
+    renderDetail(teacher);
+
+    function bookMeeting(name){
+      alert(`Meeting booked with ${name}! (This is a demo - in a real app, this would open a booking form.)`);
+    }
+  </script>
+</body>
+</html>
