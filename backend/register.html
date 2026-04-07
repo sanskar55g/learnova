@@ -52,6 +52,25 @@
     .form-group{
       margin: 20px 0;
       text-align: left;
+      position: relative;
+    }
+    .password-container {
+      position: relative;
+    }
+    .password-container input {
+      padding-right: 50px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 5px;
     }
     label{
       display: block;
@@ -127,11 +146,17 @@
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" required placeholder="Create a password" />
+        <div class="password-container">
+          <input type="password" id="password" required placeholder="Create a password" />
+          <button type="button" class="toggle-password" onclick="togglePassword('password')">Show</button>
+        </div>
       </div>
       <div class="form-group">
         <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" required placeholder="Confirm your password" />
+        <div class="password-container">
+          <input type="password" id="confirmPassword" required placeholder="Confirm your password" />
+          <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">Show</button>
+        </div>
       </div>
       <button type="submit" class="register-btn">Register</button>
     </form>
@@ -140,10 +165,22 @@
   </div>
 
   <script>
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const button = input.nextElementSibling;
+      if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        button.textContent = 'Show';
+      }
+    }
+
     const registerForm = document.getElementById('registerForm');
     const errorMsg = document.getElementById('errorMsg');
 
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const role = document.getElementById('role').value;
       const username = document.getElementById('username').value.trim();
@@ -165,28 +202,36 @@
         return;
       }
 
-      // Load existing users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      // Send registration to server
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password, role }),
+        });
 
-      // Check if username exists
-      if (users.some(u => u.username === username)) {
-        errorMsg.textContent = 'Username already exists.';
-        return;
-      }
+        const data = await response.json();
 
-      // Add new user
-      users.push({ role, username, password });
-      localStorage.setItem('users', JSON.stringify(users));
+        if (data.success) {
+          // Store user session info
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('username', username);
 
-      // Set session
-      localStorage.setItem('userRole', role);
-      localStorage.setItem('username', username);
-
-      // Redirect based on role
-      if (role === 'student') {
-        window.location.href = 'teachers.html';
-      } else {
-        window.location.href = 'teacher-profile.html';
+          // Redirect based on role
+          if (role === 'student') {
+            window.location.href = 'teachers.html';
+          } else {
+            window.location.href = 'teacher-dashboard.html';
+          }
+        } else {
+          errorMsg.textContent = data.error || 'Registration failed';
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        errorMsg.textContent = 'Network error. Please try again.';
       }
     });
   </script>

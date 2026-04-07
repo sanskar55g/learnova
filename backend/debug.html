@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug localStorage</title>
+</head>
+<body>
+    <h1>Debug localStorage</h1>
+    <div id="output"></div>
+    <script>
+        const output = document.getElementById('output');
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        output.innerHTML = '<h2>Users:</h2><pre>' + JSON.stringify(users, null, 2) + '</pre>';
+
+        // Test adding a student
+        const testStudent = { username: 'teststudent', password: 'testpass', role: 'student' };
+        users.push(testStudent);
+        localStorage.setItem('users', JSON.stringify(users));
+        output.innerHTML += '<h2>After adding test student:</h2><pre>' + JSON.stringify(users, null, 2) + '</pre>';
+    </script>
+</body>
+</html>

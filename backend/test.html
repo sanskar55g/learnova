@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Student Addition</title>
+</head>
+<body>
+    <h1>Test Student Addition</h1>
+    <button onclick="addTestStudent()">Add Test Student</button>
+    <button onclick="showUsers()">Show Users</button>
+    <div id="output"></div>
+
+    <script>
+        function addTestStudent() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const testStudent = { username: 'teststudent123', password: 'testpass123', role: 'student' };
+
+            // Check if student already exists
+            if (users.some(u => u.username === testStudent.username)) {
+                alert('Test student already exists');
+                return;
+            }
+
+            users.push(testStudent);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Test student added: ' + testStudent.username);
+            showUsers();
+        }
+
+        function showUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const output = document.getElementById('output');
+            output.innerHTML = '<h2>Current Users:</h2><pre>' + JSON.stringify(users, null, 2) + '</pre>';
+        }
+
+        // Initialize with default users if empty
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+        if (users.length === 0) {
+            users = [
+                {username: 'student1', password: 'pass123', role: 'student'},
+                {username: 'teacher1', password: 'pass123', role: 'teacher'},
+                {username: 'lvadmin', password: 'admin123', role: 'admin'}
+            ];
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        showUsers();
+    </script>
+</body>
+</html>

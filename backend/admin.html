@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - LearnOva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root{
+            --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card: #ffffff;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --text: #1f2937;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        body{
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            min-height: 100vh;
+        }
+        nav {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .password-container {
+            position: relative;
+        }
+        .password-container input {
+            padding-right: 50px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+        }
+        .announcements-container, .materials-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .announcement-item, .material-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+        .announcement-title, .material-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        .announcement-meta, .material-meta {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        .announcement-message, .material-description {
+            margin: 0;
+        }
+        .btn-outline-primary {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        .container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        h1{
+            margin: 0 0 8px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent-hover), #7c3aed);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Learnova Admin</div>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-4 mb-4">Admin Dashboard</h1>
+
+        <!-- User Management Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Add New Teacher</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="addTeacherForm" class="row g-3">
+                            <div class="col-12">
+                                <input type="text" class="form-control" id="newTeacherUsername" placeholder="Username" required>
+                            </div>
+                            <div class="col-12">
+                                <div class="password-container">
+                                    <input type="password" class="form-control" id="newTeacherPassword" placeholder="Password" required>
+                                    <button type="button" class="toggle-password" onclick="togglePassword('newTeacherPassword')">Show</button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">Add Teacher</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Add New Student</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="addStudentForm" class="row g-3">
+                            <div class="col-12">
+                                <input type="text" class="form-control" id="newStudentUsername" placeholder="Username" required>
+                            </div>
+                            <div class="col-12">
+                                <div class="password-container">
+                                    <input type="password" class="form-control" id="newStudentPassword" placeholder="Password" required>
+                                    <button type="button" class="toggle-password" onclick="togglePassword('newStudentPassword')">Show</button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">Add Student</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User List and Activity -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>All Users (Students & Teachers)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Login Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="activityTable">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Last Login</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activityBody">
+                                    <tr>
+                                        <td colspan="3" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedules Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Teacher Schedules</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="teacherSchedulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Teacher</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacherSchedulesBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Student Schedules</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="studentSchedulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentSchedulesBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements and Materials Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Send Announcement</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="announcementForm">
+                            <div class="mb-3">
+                                <label for="announcementTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="announcementTitle" placeholder="Announcement title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="announcementMessage" class="form-label">Message</label>
+                                <textarea class="form-control" id="announcementMessage" rows="4" placeholder="Enter your announcement..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Send to:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="sendToStudents" checked>
+                                    <label class="form-check-label" for="sendToStudents">
+                                        Students
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="sendToTeachers" checked>
+                                    <label class="form-check-label" for="sendToTeachers">
+                                        Teachers
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Announcement</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Add Course Material</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="materialForm">
+                            <div class="mb-3">
+                                <label for="materialTitle" class="form-label">Material Title</label>
+                                <input type="text" class="form-control" id="materialTitle" placeholder="Course material title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="materialDescription" rows="3" placeholder="Brief description..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialFile" class="form-label">Upload File</label>
+                                <input type="file" class="form-control" id="materialFile" required>
+                                <small class="form-text text-muted">Supported formats: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, JPG, PNG, MP4, etc.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Target Audience:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="materialForStudents" checked>
+                                    <label class="form-check-label" for="materialForStudents">
+                                        Students
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="materialForTeachers" checked>
+                                    <label class="form-check-label" for="materialForTeachers">
+                                        Teachers
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Post Material</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Recent Announcements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="announcementsList" class="announcements-container">
+                            <p class="text-muted">No announcements yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Posted Course Materials</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="materialsList" class="materials-container">
+                            <p class="text-muted">No materials posted yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Teacher Schedules</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="teacherSchedulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Teacher</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacherSchedulesBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Student Schedules</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="studentSchedulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentSchedulesBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                button.textContent = 'Show';
+            }
+        }
+
+        function loadUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(users => {
+                    const tbody = document.getElementById('usersBody');
+                    tbody.innerHTML = '';
+                    users.forEach((user) => {
+                        if (user.role !== 'admin') { // Don't show admin in the list
+                            const row = `
+                                <tr>
+                                    <td>${user.username}</td>
+                                    <td>••••••••</td>
+                                    <td>${user.role}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" onclick="removeUser('${user.username}')">Remove</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading users:', error));
+        }
+
+        function loadActivity() {
+            fetch('/api/activity')
+                .then(response => response.json())
+                .then(logs => {
+                    const tbody = document.getElementById('activityBody');
+                    tbody.innerHTML = '';
+                    if (logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="3" class="text-center">No login activity yet</td></tr>';
+                        return;
+                    }
+                    logs.slice(0, 10).forEach(log => { // Show last 10 logins
+                        const row = `
+                            <tr>
+                                <td>${log.username}</td>
+                                <td>${log.role}</td>
+                                <td>${new Date(log.timestamp).toLocaleString()}</td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error('Error loading activity:', error));
+        }
+
+        function loadSchedules() {
+            fetch('/api/schedules')
+                .then(response => response.json())
+                .then(schedules => {
+                    // Load teacher schedules
+                    const teacherTbody = document.getElementById('teacherSchedulesBody');
+                    teacherTbody.innerHTML = '';
+                    const teacherSchedules = schedules.filter(s => s.role === 'teacher');
+                    if (teacherSchedules.length === 0) {
+                        teacherTbody.innerHTML = '<tr><td colspan="6" class="text-center">No teacher schedules available</td></tr>';
+                    } else {
+                        teacherSchedules.forEach((schedule) => {
+                            const row = `
+                                <tr>
+                                    <td>${schedule.username}</td>
+                                    <td>${schedule.monday || 'Not set'}</td>
+                                    <td>${schedule.tuesday || 'Not set'}</td>
+                                    <td>${schedule.wednesday || 'Not set'}</td>
+                                    <td>${schedule.thursday || 'Not set'}</td>
+                                    <td>${schedule.friday || 'Not set'}</td>
+                                </tr>
+                            `;
+                            teacherTbody.innerHTML += row;
+                        });
+                    }
+
+                    // Load student schedules
+                    const studentTbody = document.getElementById('studentSchedulesBody');
+                    studentTbody.innerHTML = '';
+                    const studentSchedules = schedules.filter(s => s.role === 'student');
+                    if (studentSchedules.length === 0) {
+                        studentTbody.innerHTML = '<tr><td colspan="6" class="text-center">No student schedules available</td></tr>';
+                    } else {
+                        studentSchedules.forEach((schedule) => {
+                            const row = `
+                                <tr>
+                                    <td>${schedule.username}</td>
+                                    <td>${schedule.monday || 'Not set'}</td>
+                                    <td>${schedule.tuesday || 'Not set'}</td>
+                                    <td>${schedule.wednesday || 'Not set'}</td>
+                                    <td>${schedule.thursday || 'Not set'}</td>
+                                    <td>${schedule.friday || 'Not set'}</td>
+                                </tr>
+                            `;
+                            studentTbody.innerHTML += row;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error loading schedules:', error));
+        }
+
+        function loadSchedules() {
+            const teacherSchedules = JSON.parse(localStorage.getItem('teacherSchedules') || '{}');
+            const studentSchedules = JSON.parse(localStorage.getItem('studentSchedules') || '{}');
+
+            // Load teacher schedules
+            const teacherTbody = document.getElementById('teacherSchedulesBody');
+            teacherTbody.innerHTML = '';
+            const teacherEntries = Object.entries(teacherSchedules);
+            if (teacherEntries.length === 0) {
+                teacherTbody.innerHTML = '<tr><td colspan="6" class="text-center">No teacher schedules available</td></tr>';
+            } else {
+                teacherEntries.forEach(([teacher, schedule]) => {
+                    const row = `
+                        <tr>
+                            <td>${teacher}</td>
+                            <td>${schedule.monday || 'Not set'}</td>
+                            <td>${schedule.tuesday || 'Not set'}</td>
+                            <td>${schedule.wednesday || 'Not set'}</td>
+                            <td>${schedule.thursday || 'Not set'}</td>
+                            <td>${schedule.friday || 'Not set'}</td>
+                        </tr>
+                    `;
+                    teacherTbody.innerHTML += row;
+                });
+            }
+
+            // Load student schedules
+            const studentTbody = document.getElementById('studentSchedulesBody');
+            studentTbody.innerHTML = '';
+            const studentEntries = Object.entries(studentSchedules);
+            if (studentEntries.length === 0) {
+                studentTbody.innerHTML = '<tr><td colspan="6" class="text-center">No student schedules available</td></tr>';
+            } else {
+                studentEntries.forEach(([student, schedule]) => {
+                    const row = `
+                        <tr>
+                            <td>${student}</td>
+                            <td>${schedule.monday || 'Not set'}</td>
+                            <td>${schedule.tuesday || 'Not set'}</td>
+                            <td>${schedule.wednesday || 'Not set'}</td>
+                            <td>${schedule.thursday || 'Not set'}</td>
+                            <td>${schedule.friday || 'Not set'}</td>
+                        </tr>
+                    `;
+                    studentTbody.innerHTML += row;
+                });
+            }
+        }
+
+        function loadAnnouncements() {
+            fetch('/api/announcements')
+                .then(response => response.json())
+                .then(announcements => {
+                    const container = document.getElementById('announcementsList');
+
+                    if (announcements.length === 0) {
+                        container.innerHTML = '<p class="text-muted">No announcements yet</p>';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    announcements.slice(0, 5).forEach(announcement => { // Show last 5 announcements
+                        const item = document.createElement('div');
+                        item.className = 'announcement-item';
+                        item.innerHTML = `
+                            <div class="announcement-title">${announcement.title}</div>
+                            <div class="announcement-meta">Sent to: ${announcement.targets.join(', ')} • ${new Date(announcement.timestamp).toLocaleString()}</div>
+                            <div class="announcement-message">${announcement.message}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Error loading announcements:', error));
+        }
+
+        function loadMaterials() {
+            fetch('/api/materials')
+                .then(response => response.json())
+                .then(materials => {
+                    const container = document.getElementById('materialsList');
+
+                    if (materials.length === 0) {
+                        container.innerHTML = '<p class="text-muted">No materials posted yet</p>';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    materials.slice(0, 5).forEach(material => { // Show last 5 materials
+                        const item = document.createElement('div');
+                        item.className = 'material-item';
+                        const fileSizeMB = material.fileSize ? (material.fileSize / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size';
+                        item.innerHTML = `
+                            <div class="material-title">${material.title}</div>
+                            <div class="material-meta">File: ${material.fileName} (${fileSizeMB}) • For: ${material.targets.join(', ')} • ${new Date(material.timestamp).toLocaleString()}</div>
+                            <div class="material-description">${material.description}</div>
+                            <div style="margin-top: 8px;">
+                                <a href="${material.fileData}" download="${material.fileName}" class="btn btn-sm btn-outline-primary">Download File</a>
+                            </div>
+                        `;
+                        container.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Error loading materials:', error));
+        }
+
+        function removeUser(username) {
+            fetch(`/api/users/${username}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadUsers();
+                    loadSchedules();
+                } else {
+                    alert('Error removing user');
+                }
+            })
+            .catch(error => console.error('Error removing user:', error));
+        }
+
+        document.getElementById('addTeacherForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('newTeacherUsername').value.trim();
+            const password = document.getElementById('newTeacherPassword').value;
+
+            if (!username || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password, role: 'teacher' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadUsers();
+                    loadSchedules();
+                    document.getElementById('addTeacherForm').reset();
+                    alert('Teacher added successfully!');
+                } else {
+                    alert(data.error || 'Error adding teacher');
+                }
+            })
+            .catch(error => console.error('Error adding teacher:', error));
+        });
+
+        document.getElementById('addStudentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('newStudentUsername').value.trim();
+            const password = document.getElementById('newStudentPassword').value;
+
+            if (!username || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password, role: 'student' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadUsers();
+                    loadSchedules();
+                    document.getElementById('addStudentForm').reset();
+                    alert('Student added successfully!');
+                } else {
+                    alert(data.error || 'Error adding student');
+                }
+            })
+            .catch(error => console.error('Error adding student:', error));
+        });
+
+        document.getElementById('announcementForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('announcementTitle').value.trim();
+            const message = document.getElementById('announcementMessage').value.trim();
+            const sendToStudents = document.getElementById('sendToStudents').checked;
+            const sendToTeachers = document.getElementById('sendToTeachers').checked;
+
+            if (!title || !message) {
+                alert('Please fill in title and message.');
+                return;
+            }
+
+            if (!sendToStudents && !sendToTeachers) {
+                alert('Please select at least one target audience.');
+                return;
+            }
+
+            const targets = [];
+            if (sendToStudents) targets.push('Students');
+            if (sendToTeachers) targets.push('Teachers');
+
+            fetch('/api/announcements', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, message, targets }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadAnnouncements();
+                    document.getElementById('announcementForm').reset();
+                    alert('Announcement sent successfully!');
+                } else {
+                    alert('Error sending announcement');
+                }
+            })
+            .catch(error => console.error('Error sending announcement:', error));
+        });
+
+        document.getElementById('materialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('materialTitle').value.trim();
+            const description = document.getElementById('materialDescription').value.trim();
+            const fileInput = document.getElementById('materialFile');
+            const forStudents = document.getElementById('materialForStudents').checked;
+            const forTeachers = document.getElementById('materialForTeachers').checked;
+
+            if (!title || !description || !fileInput.files[0]) {
+                alert('Please fill in all fields and select a file.');
+                return;
+            }
+
+            if (!forStudents && !forTeachers) {
+                alert('Please select at least one target audience.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = file.name;
+            const fileSize = file.size;
+            const fileType = file.type;
+
+            // Convert file to base64
+            const base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+
+            const targets = [];
+            if (forStudents) targets.push('Students');
+            if (forTeachers) targets.push('Teachers');
+
+            fetch('/api/materials', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    fileName,
+                    fileSize,
+                    fileType,
+                    fileData: base64Data,
+                    targets
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadMaterials();
+                    document.getElementById('materialForm').reset();
+                    alert('Course material uploaded successfully!');
+                } else {
+                    alert('Error uploading material');
+                }
+            })
+            .catch(error => console.error('Error uploading material:', error));
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+            loadActivity();
+            loadSchedules();
+            loadAnnouncements();
+            loadMaterials();
+        });
+    </script>
+</body>
+</html>

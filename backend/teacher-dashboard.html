@@ -156,6 +156,47 @@
       margin: 0;
       opacity: 0.9;
     }
+    .announcements-section, .materials-section {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .announcement-item, .material-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .announcement-title, .material-title {
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+    .announcement-meta, .material-meta {
+      font-size: 12px;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
+    .announcement-message, .material-description {
+      margin: 0;
+      line-height: 1.5;
+    }
+    .btn-outline-primary {
+      border-color: var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      border: 1px solid;
+      transition: all 0.2s;
+    }
+    .btn-outline-primary:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
     @media (max-width: 768px){
       .dashboard{
         flex-direction: column;
@@ -223,6 +264,49 @@
           <li>Feedback received: "Great teaching!"</li>
         </ul>
       </div>
+
+      <div class="card">
+        <h2>Announcements</h2>
+        <div id="announcementsContainer" class="announcements-section">
+          <p class="text-muted">No announcements available</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Start Live Session</h2>
+        <form id="startSessionForm">
+          <div class="mb-3">
+            <label for="sessionCourse" class="form-label">Course:</label>
+            <input type="text" class="form-control" id="sessionCourse" placeholder="e.g., Mathematics, Physics" required>
+          </div>
+          <div class="mb-3">
+            <label for="sessionTitle" class="form-label">Session Title:</label>
+            <input type="text" class="form-control" id="sessionTitle" placeholder="e.g., Calculus Basics" required>
+          </div>
+          <div class="mb-3">
+            <label for="sessionDescription" class="form-label">Description (optional):</label>
+            <textarea class="form-control" id="sessionDescription" rows="2" placeholder="Brief description of the session..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-success" style="width: 100%;">🔴 Go Live</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Active Sessions</h2>
+        <div id="activeSessionsContainer" style="max-height: 300px; overflow-y: auto;">
+          <p class="text-muted">No active sessions</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>
+          Course Materials
+          <button id="refreshMaterials" style="background: none; border: none; color: #667eea; cursor: pointer; font-size: 16px; margin-left: 10px;" title="Refresh materials">⟳</button>
+        </h2>
+        <div id="materialsContainer" class="materials-section">
+          <p class="text-muted">No course materials available</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -244,10 +328,168 @@
 
     document.getElementById('username').textContent = profile.name;
 
+    function loadAnnouncements() {
+      fetch('/api/announcements')
+        .then(response => response.json())
+        .then(announcements => {
+          const container = document.getElementById('announcementsContainer');
+
+          if (announcements.length === 0) {
+            container.innerHTML = '<p class="text-muted">No announcements available</p>';
+            return;
+          }
+
+          container.innerHTML = '';
+          announcements.slice(0, 10).forEach(announcement => { // Show last 10 announcements
+            if (announcement.targets.includes('Teachers')) {
+              const item = document.createElement('div');
+              item.className = 'announcement-item';
+              item.innerHTML = `
+                <div class="announcement-title">${announcement.title}</div>
+                <div class="announcement-meta">${new Date(announcement.timestamp).toLocaleString()}</div>
+                <div class="announcement-message">${announcement.message}</div>
+              `;
+              container.appendChild(item);
+            }
+          });
+
+          if (container.children.length === 0) {
+            container.innerHTML = '<p class="text-muted">No announcements for teachers</p>';
+          }
+        })
+        .catch(error => console.error('Error loading announcements:', error));
+    }
+
+    function loadMaterials() {
+      fetch('/api/materials')
+        .then(response => response.json())
+        .then(materials => {
+          const container = document.getElementById('materialsContainer');
+
+          if (materials.length === 0) {
+            container.innerHTML = '<p class="text-muted">No course materials available</p>';
+            return;
+          }
+
+          container.innerHTML = '';
+          materials.slice(0, 10).forEach(material => { // Show last 10 materials
+            if (material.targets.includes('Teachers')) {
+              const item = document.createElement('div');
+              item.className = 'material-item';
+              const fileSizeMB = material.fileSize ? (material.fileSize / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown size';
+              item.innerHTML = `
+                <div class="material-title">${material.title}</div>
+                <div class="material-meta">File: ${material.fileName} (${fileSizeMB}) • ${new Date(material.timestamp).toLocaleString()}</div>
+                <div class="material-description">${material.description}</div>
+                <div style="margin-top: 8px;">
+                  <a href="${material.fileData}" download="${material.fileName}" class="btn btn-sm btn-outline-primary">Download File</a>
+                </div>
+              `;
+              container.appendChild(item);
+            }
+          });
+
+          if (container.children.length === 0) {
+            container.innerHTML = '<p class="text-muted">No course materials for teachers</p>';
+          }
+        })
+        .catch(error => console.error('Error loading materials:', error));
+    }
+
+    function editProfile() {
+      window.location.href = 'teacher-profile.html';
+    }
+
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
     }
+
+    // Live Session functions
+    function loadActiveSessions() {
+      fetch('/api/sessions/active')
+        .then(response => response.json())
+        .then(sessions => {
+          const container = document.getElementById('activeSessionsContainer');
+          if (!sessions || sessions.length === 0) {
+            container.innerHTML = '<p class="text-muted">No active sessions</p>';
+            return;
+          }
+
+          container.innerHTML = '';
+          sessions.forEach(session => {
+            const item = document.createElement('div');
+            item.className = 'announcement-item';
+            const startTime = new Date(session.startTime).toLocaleString();
+            item.innerHTML = `
+              <div class="announcement-title">🔴 ${session.teacherName} - ${session.course}</div>
+              <div class="announcement-meta">${session.title} • ${startTime}</div>
+              <div class="announcement-message">${session.description || 'Live session in progress'}</div>
+              <div style="margin-top: 8px;">
+                <button class="btn btn-outline-primary" onclick="joinSession('${session.sessionId}', '${session.title}')">Join Stream</button>
+              </div>
+            `;
+            container.appendChild(item);
+          });
+        })
+        .catch(error => console.error('Error loading sessions:', error));
+    }
+
+    function joinSession(sessionId, title) {
+      window.open(`/stream.html?sessionId=${sessionId}&title=${encodeURIComponent(title)}`, 'LiveSession', 'width=1200,height=700');
+    }
+
+    // Start session handler
+    document.getElementById('startSessionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const course = document.getElementById('sessionCourse').value.trim();
+      const title = document.getElementById('sessionTitle').value.trim();
+      const description = document.getElementById('sessionDescription').value.trim();
+      const teacherUsername = localStorage.getItem('username');
+      const teacherName = localStorage.getItem('username'); // Could be improved to use actual name
+
+      try {
+        const response = await fetch('/api/sessions/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teacherUsername,
+            teacherName,
+            course,
+            title,
+            description
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('✅ Live session started! Students will be notified.');
+          document.getElementById('startSessionForm').reset();
+          loadActiveSessions();
+          // Open the stream window
+          joinSession(data.session.sessionId, title);
+        } else {
+          alert('Error starting session: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error starting session:', error);
+        alert('Network error. Please try again.');
+      }
+    });
+
+    // Load announcements and materials
+    loadAnnouncements();
+    loadMaterials();
+    loadActiveSessions();
+
+    // Add refresh button handler
+    document.getElementById('refreshMaterials').addEventListener('click', loadMaterials);
+
+    // Auto-refresh materials every 10 seconds
+    setInterval(loadMaterials, 10000);
+
+    // Auto-refresh active sessions every 5 seconds
+    setInterval(loadActiveSessions, 5000);
 
     function editProfile() {
       window.location.href = 'teacher-profile.html';

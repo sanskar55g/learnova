@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnova</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #0f0c29;
+            color: white;
+        }
+
+        /* NAVBAR */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            color: #c084fc;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #c084fc;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #6d28d9, #9333ea, #4c1d95);
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+        }
+
+        .hero p {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: white;
+            color: #6d28d9;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #e9d5ff;
+        }
+
+        /* FEATURES */
+        .features {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .features h2 {
+            margin-bottom: 40px;
+            color: #c084fc;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            width: 250px;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* ABOUT */
+        .about {
+            padding: 60px 40px;
+            text-align: center;
+            background: #1a1333;
+        }
+
+        .about h2 {
+            color: #c084fc;
+            margin-bottom: 20px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #0f0c29;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+   <header>
+    <h1>Learnova</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="about.html">About</a>
+    </nav>
+</header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div>
+            <h2>Reimagining Learning</h2>
+            <p>Learnova is your smart learning companion designed to simplify education and make learning interactive, engaging, and effective.</p>
+            <button class="btn" onclick="location.href='login.html'">Get Started</button>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <h2>What Learnova Offers</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>📚 Smart Learning</h3>
+                <p>Personalized study paths tailored to your pace and understanding.</p>
+            </div>
+            <div class="card">
+                <h3>⚡ Fast Progress</h3>
+                <p>Track your performance and improve efficiently with insights.</p>
+            </div>
+            <div class="card">
+                <h3>🎯 Focused Practice</h3>
+                <p>Practice with targeted questions and real-time feedback.</p>
+            </div>
+            <div class="card">
+                <h3>🌐 Accessible Anywhere</h3>
+                <p>Learn anytime, anywhere with a seamless experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about">
+        <h2>About Learnova</h2>
+        <p>
+            Learnova is a modern educational platform focused on transforming the way students learn.
+            By combining technology and innovation, we aim to make learning intuitive, efficient, and enjoyable.
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Learnova. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Stream</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #0d0d0d;
+      padding: 16px 24px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title h1 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .title p {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .video-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .video-player {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 500px;
+    }
+
+    .video-player.placeholder {
+      font-size: 18px;
+      color: white;
+      text-align: center;
+    }
+
+    .video-player video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .video-controls {
+      background: #111;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #333;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: #333;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #444;
+    }
+
+    .sidebar {
+      width: 320px;
+      background: #111;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      background: #1a1a1a;
+      padding: 16px;
+      border-bottom: 1px solid #333;
+      font-weight: 600;
+    }
+
+    .participants-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .participant {
+      padding: 12px 16px;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .participant-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .participant-info {
+      flex: 1;
+    }
+
+    .participant-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .participant-role {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .chat-section {
+      border-top: 1px solid #333;
+      padding: 12px;
+    }
+
+    .chat-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 12px;
+      height: 150px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .chat-message {
+      margin-bottom: 8px;
+      padding: 8px;
+      background: #222;
+      border-radius: 4px;
+    }
+
+    .chat-message .name {
+      font-weight: 600;
+      color: #667eea;
+      font-size: 12px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: white;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .chat-send {
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-weight: 600;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #10b981;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">
+      <h1>🔴 <span id="sessionTitle">Live Stream</span></h1>
+      <p>
+        <span class="status-indicator">
+          <span class="status-dot"></span>
+          LIVE
+        </span>
+      </p>
+    </div>
+    <div class="controls">
+      <button class="btn btn-secondary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+      <button class="btn btn-danger" onclick="endStream()">✕ Leave</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="video-container">
+      <div class="video-player placeholder" id="videoPlayer">
+        <div>
+          <div style="font-size: 48px; margin-bottom: 16px;">🎥</div>
+          <div>Live stream is ready</div>
+          <div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 8px;">Teacher is streaming...</div>
+        </div>
+      </div>
+      <div class="video-controls">
+        <button class="icon-btn" title="Mute" onclick="toggleMute()">🔊</button>
+        <button class="icon-btn" title="Settings" onclick="openSettings()">⚙️</button>
+        <div style="flex: 1;"></div>
+        <span style="font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 8px;">
+          <span id="participantCount">1</span> watching
+        </span>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-header">Participants (<span id="participantCountSidebar">1</span>)</div>
+      <div class="participants-list" id="participantsList">
+        <div class="participant">
+          <div class="participant-avatar">T</div>
+          <div class="participant-info">
+            <div class="participant-name">Teacher</div>
+            <div class="participant-role">Instructor</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-section">
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-input-container">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Send a message..." />
+          <button class="chat-send" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get session details from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('sessionId');
+    const title = decodeURIComponent(urlParams.get('title') || 'Live Session');
+    const username = localStorage.getItem('username');
+
+    document.getElementById('sessionTitle').textContent = title;
+
+    let isMuted = false;
+    let participants = [username];
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      const btn = event.target.closest('button');
+      btn.textContent = isMuted ? '🔇' : '🔊';
+    }
+
+    function openSettings() {
+      alert('Stream settings dialog would open here');
+    }
+
+    function endStream() {
+      if (confirm('Are you sure you want to leave this stream?')) {
+        window.close();
+      }
+    }
+
+    function toggleFullscreen() {
+      const videoContainer = document.querySelector('.video-container');
+      if (!document.fullscreenElement) {
+        videoContainer.requestFullscreen().catch(err => {
+          alert(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatBox = document.getElementById('chatBox');
+      const msgEl = document.createElement('div');
+      msgEl.className = 'chat-message';
+      msgEl.innerHTML = `<div class="name">${username}:</div><div>${message}</div>`;
+      chatBox.appendChild(msgEl);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = '';
+    }
+
+    // Allow sending message with Enter key
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Simulate participant updates
+    setInterval(() => {
+      if (Math.random() > 0.8) {
+        document.getElementById('participantCount').textContent = participants.length;
+        document.getElementById('participantCountSidebar').textContent = participants.length;
+      }
+    }, 3000);
+
+    // Add initial chat message
+    const chatBox = document.getElementById('chatBox');
+    const welcomeMsg = document.createElement('div');
+    welcomeMsg.className = 'chat-message';
+    welcomeMsg.innerHTML = `<div class="name">System:</div><div>Welcome to the live stream! 👋</div>`;
+    chatBox.appendChild(welcomeMsg);
+  </script>
+</body>
+</html>

@@ -52,6 +52,25 @@
     .form-group{
       margin: 20px 0;
       text-align: left;
+      position: relative;
+    }
+    .password-container {
+      position: relative;
+    }
+    .password-container input {
+      padding-right: 50px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 5px;
     }
     label{
       display: block;
@@ -119,6 +138,7 @@
           <option value="">Select Role</option>
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
+          <option value="admin">Admin</option>
         </select>
       </div>
       <div class="form-group">
@@ -127,7 +147,10 @@
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" required placeholder="Enter password" />
+        <div class="password-container">
+          <input type="password" id="password" required placeholder="Enter password" />
+          <button type="button" class="toggle-password" onclick="togglePassword('password')">Show</button>
+        </div>
       </div>
       <button type="submit" class="login-btn">Login</button>
     </form>
@@ -136,21 +159,22 @@
   </div>
 
   <script>
-    // Load users from localStorage, fallback to defaults
-    const defaultUsers = [
-      {username: 'student1', password: 'pass123', role: 'student'},
-      {username: 'teacher1', password: 'pass123', role: 'teacher'}
-    ];
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    if (users.length === 0) {
-      users = defaultUsers;
-      localStorage.setItem('users', JSON.stringify(users));
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const button = input.nextElementSibling;
+      if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        button.textContent = 'Show';
+      }
     }
 
     const loginForm = document.getElementById('loginForm');
     const errorMsg = document.getElementById('errorMsg');
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const role = document.getElementById('role').value;
       const username = document.getElementById('username').value;
@@ -161,27 +185,38 @@
         return;
       }
 
-      const user = users.find(u => u.username === username && u.password === password && u.role === role);
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password, role }),
+        });
 
-      if (user) {
-        // Store user session
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('username', username);
+        const data = await response.json();
 
-        // Redirect based on role
-        if (role === 'student') {
-          window.location.href = 'teachers.html';
-        } else {
-          // Check if teacher profile exists
-          const profile = localStorage.getItem(`teacher_${username}`);
-          if (profile) {
-            window.location.href = 'teacher-dashboard.html';
+        if (data.success) {
+          // Store user session info
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('username', username);
+
+          // Redirect based on role
+          if (role === 'student') {
+            window.location.href = 'teachers.html';
+          } else if (role === 'admin') {
+            window.location.href = 'admin.html';
           } else {
-            window.location.href = 'teacher-profile.html';
+            // Check if teacher profile exists (this might need to be updated)
+            window.location.href = 'teacher-dashboard.html';
           }
+        } else {
+          errorMsg.textContent = data.error || 'Login failed';
         }
-      } else {
-        errorMsg.textContent = 'Invalid credentials.';
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMsg.textContent = 'Network error. Please try again.';
       }
     });
   </script>
