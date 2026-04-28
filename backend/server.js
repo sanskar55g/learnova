@@ -471,7 +471,7 @@ initializeDefaultUsers().catch(err => {
 });
 
 // Start server regardless of database initialization status
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log('Ready to accept connections (MongoDB may still be connecting)');
 });
